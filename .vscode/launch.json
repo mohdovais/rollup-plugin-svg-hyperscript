@@ -7,11 +7,20 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "Launch Program",
+            "name": "React",
             "skipFiles": [
                 "<node_internals>/**"
             ],
-            "program": "${workspaceFolder}/tests/01.js"
+            "program": "${workspaceFolder}/tests/react-tests.js"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Preact",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceFolder}/tests/preact-tests.js"
         }
     ]
 }

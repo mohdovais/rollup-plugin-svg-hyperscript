@@ -1,95 +1,51 @@
-const fs = require("fs");
-const path = require("path");
-const { parse } = require("svg-parser");
-const { createFilter } = require("rollup-pluginutils");
+import * as fs from "fs";
+import * as path from "path";
+import { createFilter } from "rollup-pluginutils";
 
-const PROPNAME_REGEX = /(:|-)(.{1})/g;
+import { toPropsString } from "./props";
+import { createChildren } from "./hyper";
+import { toClassName } from "./classname";
+import { parseSVG } from "./parse-svg";
 
-function toPropsString(properties) {
-  const keys = Object.keys(properties);
-  return keys.length === 0
-    ? "null"
-    : JSON.stringify(
-        Object.keys(properties).reduce(function(accum, key) {
-          accum[key.replace(PROPNAME_REGEX, x => x.slice(1).toUpperCase())] =
-            properties[key];
-          return accum;
-        }, {})
-      );
-}
-
-function createElement(object) {
-  const { type, tagName, properties, children } = object;
-  return type === "element"
-    ? `h("${tagName}", ${toPropsString(properties)}, ${createChildren(
-        children
-      )})`
-    : null;
-}
-
-function createChildren(array) {
-  switch (array.length) {
-    case 0:
-      return "null";
-    case 1:
-      return createElement(array[0]);
-    default:
-      return array.map(createElement);
-  }
-}
-
-function toClassName(string) {
-  return path
-    .basename(string, ".svg")
-    .replace(/[^a-zA-Z0-9].?/g, x => x.slice(1).toUpperCase());
-}
-
-function getSVG(object) {
-  const { type, tagName, children } = object;
-
-  if (type === "element" && tagName === "svg") {
-    return object;
-  }
-
-  for (let i = 0, l = children.length; i < l; i++) {
-    const child = getSVG(children[i]);
-    if (child !== undefined) {
-      return child;
-    }
-  }
-}
-
-module.exports = function(config = {}) {
-  const { include, exclude } = config;
+export default function importSVG(config) {
+  const {
+    include,
+    exclude,
+    importDeclaration,
+    pragma,
+    transformPropNames
+  } = Object.assign(
+    {
+      importDeclaration: "import React from 'react'",
+      pragma: "React.createElement"
+    },
+    config
+  );
   const includeExcludeFilter = createFilter(include, exclude);
   const filter = id => /\.svg$/.test(id) && includeExcludeFilter(id);
-  const pragma = "React.createElement";
   let file;
 
-  // React
-  // createElement
-
   return {
-    name: "rollup-plugin-react-svg",
+    name: "rollup-plugin-svg-hyperscript",
     resolveId(source, caller) {
       if (filter(source)) {
-        file = path.normalize(path.dirname(caller) + "/" + source);
+        file =
+          typeof caller === "string" // `caller` will be undefined if svg is direct input
+            ? path.normalize(path.resolve(path.dirname(caller), source))
+            : source;
       }
       return null;
     },
     load(id) {
       if (filter(id)) {
-        const fileContent = fs.readFileSync(file, "utf8");
-        const parsed = parse(fileContent);
-        const svg = getSVG(parsed);
-        const defaultProps = toPropsString(svg.properties);
+        const svg = parseSVG(fs.readFileSync(file, "utf8"));
+        const defaultProps = toPropsString(svg.properties, transformPropNames);
         const componentName = toClassName(id);
 
         return `
-import React from 'react';
-const h = ${pragma};
+${importDeclaration};
 export default function ${componentName}(props){
-  return h('svg', props, ${createChildren(svg.children)});
+  return ${pragma}('svg', props, ${createChildren(svg.children, pragma)});
 }
 ${componentName}.defaultProps = ${defaultProps};
 `;
@@ -97,4 +53,4 @@ ${componentName}.defaultProps = ${defaultProps};
       return null;
     }
   };
-};
+}

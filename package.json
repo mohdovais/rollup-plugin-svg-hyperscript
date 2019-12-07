@@ -1,17 +1,20 @@
 {
-  "name": "@ovais/rollup-plugin-svg-jsx",
+  "name": "@ovais/rollup-plugin-svg-hyperscript",
   "version": "0.0.1",
   "description": "Enable SVG import as JSX",
-  "main": "dist/rollup-plugin-svg-jsx.cjs.js",
-  "module": "dist/rollup-plugin-svg-jsx.es.js",
-  "jsnext:main": "dist/rollup-plugin-svg-jsx.es.js",
+  "main": "dist/rollup-plugin-svg-hyperscript.cjs.js",
+  "module": "dist/rollup-plugin-svg-hyperscript.es.js",
+  "jsnext:main": "dist/rollup-plugin-svg-hyperscript.es.js",
   "scripts": {
-    "tsc": "tsc src/index.ts",
-    "test": "node tests/01.js"
+    "lint": "eslint --fix src/**",
+    "prebuild": "npm run lint",
+    "build": "rollup -c",
+    "pretest": "npm run build",
+    "test": "node tests/index.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/mohdovais/rollup-plugin-svg-jsx.git"
+    "url": "git+https://github.com/mohdovais/rollup-plugin-svg-hyperscript.git"
   },
   "keywords": [
     "Rollup",
@@ -20,13 +23,12 @@
   "author": "Mohd Ovais",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/mohdovais/rollup-plugin-svg-jsx/issues"
+    "url": "https://github.com/mohdovais/rollup-plugin-svg-hyperscript/issues"
   },
-  "homepage": "https://github.com/mohdovais/rollup-plugin-svg-jsx#readme",
+  "homepage": "https://github.com/mohdovais/rollup-plugin-svg-hyperscript#readme",
   "files": [
     "src",
     "dist",
-    "index.d.ts",
     "README.md"
   ],
   "peerDependencies": {
@@ -38,6 +40,8 @@
   },
   "devDependencies": {
     "eslint": "^6.7.2",
+    "preact": "^10.0.5",
+    "preact-render-to-string": "^5.1.2",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
     "require-from-string": "^2.0.2",

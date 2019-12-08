@@ -1,7 +1,7 @@
 {
-  "name": "@ovais/rollup-plugin-svg-hyperscript",
-  "version": "0.0.1",
-  "description": "Enable SVG import as JSX",
+  "name": "rollup-plugin-svg-hyperscript",
+  "version": "0.1.0",
+  "description": "Rollup plugin to import .svg files as React functional component",
   "main": "dist/rollup-plugin-svg-hyperscript.cjs.js",
   "module": "dist/rollup-plugin-svg-hyperscript.es.js",
   "jsnext:main": "dist/rollup-plugin-svg-hyperscript.es.js",
@@ -10,7 +10,8 @@
     "prebuild": "npm run lint",
     "build": "rollup -c",
     "pretest": "npm run build",
-    "test": "node tests/index.js"
+    "test": "node tests/index.js",
+    "prepublish": "npm test"
   },
   "repository": {
     "type": "git",

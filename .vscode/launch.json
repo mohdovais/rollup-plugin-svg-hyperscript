@@ -11,7 +11,7 @@
             "skipFiles": [
                 "<node_internals>/**"
             ],
-            "program": "${workspaceFolder}/tests/react-tests.js"
+            "program": "${workspaceFolder}/tests/tests-react.js"
         },
         {
             "type": "node",
@@ -20,7 +20,7 @@
             "skipFiles": [
                 "<node_internals>/**"
             ],
-            "program": "${workspaceFolder}/tests/preact-tests.js"
+            "program": "${workspaceFolder}/tests/tests-preact.js"
         }
     ]
 }

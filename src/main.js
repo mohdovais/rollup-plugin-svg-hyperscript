@@ -23,6 +23,7 @@ export default function importSVG(config) {
   );
   const includeExcludeFilter = createFilter(include, exclude);
   const filter = id => /\.svg$/.test(id) && includeExcludeFilter(id);
+  const transformKeys = transformPropNames !== false;
   let file;
 
   return {
@@ -39,13 +40,13 @@ export default function importSVG(config) {
     load(id) {
       if (filter(id)) {
         const svg = parseSVG(fs.readFileSync(file, "utf8"));
-        const defaultProps = toPropsString(svg.properties, transformPropNames);
+        const defaultProps = toPropsString(svg.properties, transformKeys);
         const componentName = toClassName(id);
 
         return `
 ${importDeclaration};
 export default function ${componentName}(props){
-  return ${pragma}('svg', props, ${createChildren(svg.children, pragma)});
+  return ${pragma}('svg', props, ${createChildren(svg.children, pragma, transformKeys)});
 }
 ${componentName}.defaultProps = ${defaultProps};
 `;

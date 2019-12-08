@@ -24,9 +24,9 @@ function toPropsString(properties, transformPropNames) {
       );
 }
 
-function createElement(object, pragma) {
+function createElement(object, pragma, transformKeys) {
   const { type, tagName, properties, children } = object;
-  const props = toPropsString(properties);
+  const props = toPropsString(properties, transformKeys);
   const ch = createChildren(children, pragma);
 
   return type === "element"
@@ -34,14 +34,14 @@ function createElement(object, pragma) {
     : null;
 }
 
-function createChildren(children, pragma) {
+function createChildren(children, pragma, transformKeys) {
   switch (children.length) {
     case 0:
       return "null";
     case 1:
-      return createElement(children[0], pragma);
+      return createElement(children[0], pragma, transformKeys);
     default:
-      return children.map(child => createElement(child, pragma));
+      return children.map(child => createElement(child, pragma, transformKeys));
   }
 }
 
@@ -85,6 +85,7 @@ function importSVG(config) {
   );
   const includeExcludeFilter = rollupPluginutils.createFilter(include, exclude);
   const filter = id => /\.svg$/.test(id) && includeExcludeFilter(id);
+  const transformKeys = transformPropNames !== false;
   let file;
 
   return {
@@ -101,13 +102,13 @@ function importSVG(config) {
     load(id) {
       if (filter(id)) {
         const svg = parseSVG(fs.readFileSync(file, "utf8"));
-        const defaultProps = toPropsString(svg.properties, transformPropNames);
+        const defaultProps = toPropsString(svg.properties, transformKeys);
         const componentName = toClassName(id);
 
         return `
 ${importDeclaration};
 export default function ${componentName}(props){
-  return ${pragma}('svg', props, ${createChildren(svg.children, pragma)});
+  return ${pragma}('svg', props, ${createChildren(svg.children, pragma, transformKeys)});
 }
 ${componentName}.defaultProps = ${defaultProps};
 `;

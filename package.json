@@ -11,14 +11,11 @@
     "build": "rollup -c",
     "pretest": "npm run build",
     "test": "node tests/index.js",
-    "prepublish": "npm test"
+    "prepare": "npm test"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/mohdovais/rollup-plugin-svg-hyperscript.git"
-  },
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com/"
   },
   "keywords": [
     "Rollup",

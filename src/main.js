@@ -1,5 +1,4 @@
 import * as fs from "fs";
-import * as path from "path";
 import { createFilter } from "rollup-pluginutils";
 
 import { toPropsString } from "./props";
@@ -24,22 +23,12 @@ export default function importSVG(config) {
   const includeExcludeFilter = createFilter(include, exclude);
   const filter = id => /\.svg$/.test(id) && includeExcludeFilter(id);
   const transformKeys = transformPropNames !== false;
-  let file;
 
   return {
     name: "rollup-plugin-svg-hyperscript",
-    resolveId(source, caller) {
-      if (filter(source)) {
-        file =
-          typeof caller === "string" // `caller` will be undefined if svg is direct input
-            ? path.normalize(path.resolve(path.dirname(caller), source))
-            : source;
-      }
-      return null;
-    },
     load(id) {
       if (filter(id)) {
-        const svg = parseSVG(fs.readFileSync(file, "utf8"));
+        const svg = parseSVG(fs.readFileSync(id, "utf8"));
         const defaultProps = toPropsString(svg.properties, transformKeys);
         const componentName = toClassName(id);
 

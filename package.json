@@ -1,6 +1,6 @@
 {
   "name": "rollup-plugin-svg-hyperscript",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Rollup plugin to import .svg files as React functional component",
   "main": "dist/rollup-plugin-svg-hyperscript.cjs.js",
   "module": "dist/rollup-plugin-svg-hyperscript.es.js",
@@ -18,8 +18,10 @@
     "url": "git+https://github.com/mohdovais/rollup-plugin-svg-hyperscript.git"
   },
   "keywords": [
-    "Rollup",
-    "SVG"
+    "rollup",
+    "svg",
+    "react",
+    "preact"
   ],
   "author": "Mohd Ovais",
   "license": "MIT",

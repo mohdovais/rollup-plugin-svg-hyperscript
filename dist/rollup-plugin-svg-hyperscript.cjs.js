@@ -15,9 +15,10 @@ function toPropsString(properties, transformPropNames) {
     ? "null"
     : JSON.stringify(
         Object.keys(properties).reduce(function(accum, key) {
-          const transformedKey = transformKey
-            ? key.replace(PROPNAME_REGEX, x => x.slice(1).toUpperCase())
-            : key;
+          const transformedKey =
+            transformKey && !key.startsWith("aria-")
+              ? key.replace(PROPNAME_REGEX, x => x.slice(1).toUpperCase())
+              : key;
           accum[transformedKey] = properties[key];
           return accum;
         }, {})
